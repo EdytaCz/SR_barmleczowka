@@ -18,7 +18,16 @@ public Kucharz (BarMleczny Bar){
     
 }
 
-   
+   @Override
+    public void run() {
+        try{
+            barmleczny.PrzygotujPosilek();
+            System.out.println("Posiłek wydany!");
+        }
+        catch(Exception e){
+            System.out.println("Cos się zepsuło!");
+        }
+    }
     
     
 }

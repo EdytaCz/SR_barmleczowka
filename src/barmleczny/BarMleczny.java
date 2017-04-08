@@ -35,20 +35,29 @@ public class BarMleczny {
      */
     public static void main(String[] args) {
 
+        
         // TODO code application logic here
     }
 
     public void OtworzBar() {
         praca = true;
+        kucharz.run();
+        for (Klient klienci : klienci) {
+            klienci.run();
+        }
+    }
+    
+    public void SkonczPrace(){
+        praca=false;
         kucharz.start();
         for (Klient klienci : klienci) {
             klienci.interrupt();
         }
     }
-
-    public synchronized void PrzygotujPosilek(Posilek item) throws InterruptedException {
+    
+    public synchronized void PrzygotujPosilek() throws InterruptedException {
         czekajNaWydanie();
-        posilek.wsadz(item);
+        posilek.wsadz(new Posilek());
         notifyAll();
     }
 

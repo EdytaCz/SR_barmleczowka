@@ -21,13 +21,18 @@ public Kucharz (BarMleczny Bar){
    @Override
     public void run() {
         try{
+            while(true){
             barmleczny.PrzygotujPosilek();
             System.out.println("Posiłek wydany!");
+            liczbaWydanychposilkow++;
         }
-        catch(Exception e){
-            System.out.println("Cos się zepsuło!");
+        }    
+        catch(InterruptedException  e){
+            System.out.println("Bar zamkniety");
         }
     }
-    
+    public int LiczbaWydanychPosilkow(){
+    return liczbaWydanychposilkow;
+    }
     
 }

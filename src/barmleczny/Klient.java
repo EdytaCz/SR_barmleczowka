@@ -13,6 +13,7 @@ public class Klient extends Thread {
 
     private BarMleczny barmleczny;
     public int zjedzonePosilki;
+    private boolean interrupt=false;
 
     Klient(BarMleczny bar) {
         barmleczny = bar;
@@ -21,12 +22,23 @@ public class Klient extends Thread {
     
     @Override
     public void run() {
-        try{
-            System.out.println("Klient jest głodny!");
-            barmleczny.WydajPosilek();            
+        try{while(true){
+            System.out.println("Klient "+Thread.currentThread().getName()+" jest głodny!");
+            zjedzonePosilki+=barmleczny.WydajPosilek();  
+            System.out.println("Klient "+Thread.currentThread().getName()+" zjadl posilek");
+            
+            yield();
+        }
         }
         catch(Exception e){
-            System.out.println("Cos się zepsuło!");
+            System.out.println("Spadam bo bar zamkniety");
+            interrupt=true;
         }
     }
+      public boolean Interrupt(){
+        return interrupt;
+}
+     public int LiczbaZjedzonychPosilkow(){
+    return zjedzonePosilki;
+     }
 }

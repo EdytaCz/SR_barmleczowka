@@ -33,23 +33,56 @@ public class BarMleczny {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+        BarMleczny bar = new BarMleczny(10);
+        bar.OtworzBar();
+        Thread.sleep(100);        
+        bar.SkonczPrace();
+         if (bar.IsReadyToSummarry())bar.Podsumowanie();
+        //if (bar.IsReadyToSummarry())bar.WriteSummary();
+        
+        
+
+    }
+       public boolean IsReadyToSummarry(){
+    
+    boolean hasProgramFinished = false;
+        while (!hasProgramFinished) {
+            int counter = 0;
+            for (Klient klient : klienci) {
+                if (klient.Interrupt()) {
+                    counter++;
+                }
+            }
+            if (counter==klienci.length) {
+                hasProgramFinished=true;
+            }
+        }
+        return hasProgramFinished;
+}
+ public void Podsumowanie() {
 
         
-        // TODO code application logic here
+        System.out.println("================================ \n");
+        for (Klient klient: klienci) {
+            int zjedzonePosilki = klient.LiczbaZjedzonychPosilkow();
+            System.out.println("Klient" + klient.getName() + " zjadł " + zjedzonePosilki + "\n");
+        }
+       int wydanePosilki = kucharz.LiczbaWydanychPosilkow();
+        System.out.println("Kucharz wydał "+wydanePosilki);
     }
 
     public void OtworzBar() {
         praca = true;
-        kucharz.run();
-        for (Klient klienci : klienci) {
-            klienci.run();
+        kucharz.start();
+        for (Klient klient : klienci) {
+            klient.start();
         }
     }
     
     public void SkonczPrace(){
         praca=false;
-        kucharz.start();
+        kucharz.interrupt();
         for (Klient klienci : klienci) {
             klienci.interrupt();
         }
@@ -68,7 +101,12 @@ public class BarMleczny {
         notifyAll();
         return 1;
     }
-
+       private synchronized void CzekajNaPusty() throws InterruptedException {
+        while (!posilek.CzyPusty()) {
+            System.out.println(Thread.currentThread().getName() + " Czeka na posilek");
+            wait();
+        }
+}
     private synchronized void czekajNaWydanie() throws InterruptedException {
         while (!praca) {
             System.out.println(Thread.currentThread().getName() + " Czeka na posilek");
@@ -77,9 +115,9 @@ public class BarMleczny {
     }
 
     private synchronized void czekajNaPosilek() throws InterruptedException {
-while (!posilek.CzyPusty())
+        while (posilek.CzyPusty())
         {
-            System.out.println(Thread.currentThread().getName()+" czeka na odbior klienta");
+            System.out.println(Thread.currentThread().getName()+"Nie dostal posilku");
             wait();
 }
     }
